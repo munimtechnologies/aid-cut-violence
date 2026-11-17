@@ -18,8 +18,8 @@ the finding has been reported as global.
 
 This project asks the question **for every low- and middle-income country**, with **only open
 data** (UCDP GED 26.1 and UCDP candidate events to September 2026, ForeignAssistance.gov, World
-Bank, CGD's published country table), and with the design and predictions **fixed in public before
-the data is opened**.
+Bank, CGD's published country table, VIEWS's archived forecasts), and with the design and
+predictions **fixed in public before the data is opened**.
 
 ## Step 1: worldwide test ([PREREGISTRATION.md](PREREGISTRATION.md))
 
@@ -43,11 +43,22 @@ pre-violence control for crisis selection, contrasts cut and retained dollars, a
 If the share does not matter, country-level dependence designs (including our step 1) may be
 picking up fragility.
 
+## Step 4: did violence beat a forecast made before the cut? ([PREREG-4.md](PREREG-4.md))
+
+VIEWS (Uppsala University and PRIO) keeps every monthly conflict forecast it has published. Its
+January 2025 run used conflict data through January 2025 and no aid data, so its forecasts for the
+rest of 2025 are a counterfactual **fixed before the shutdown**: trends already under way are in
+it, and an effect of the cut is not. `forecast.py` asks whether 2025 state-based deaths beat that
+forecast by more in USAID-dependent countries than 2024 deaths beat the January 2024 forecast.
+Placebos use the 2023 and 2022 runs. As far as we know, this is the first use of archived
+conflict forecasts as the counterfactual for the aid cut.
+
 ```
 python -m unittest -v
 python aidcut.py --data-dir data --out-dir out
 python mechanism.py --data-dir data --out-dir out
 python dose.py --data-dir data --out-dir out
+python forecast.py --data-dir data --out-dir out
 ```
 
 ## Status
@@ -55,14 +66,17 @@ python dose.py --data-dir data --out-dir out
 - 2026-11-17: step 1 pre-registration and code published; first run queued.
 - 2026-11-17: step 2 (PREREG-2.md, mechanism.py) pre-registered and queued, before step 1 results.
 - 2026-11-17: step 3 (PREREG-3.md, dose.py) pre-registered and queued, before any result of steps 1-2.
-- Results and the grading of every prediction will be added as RESULTS.md, RESULTS-2.md and
-  RESULTS-3.md, including the ones that fail.
+- 2026-11-17: step 4 (PREREG-4.md, forecast.py) pre-registered and queued, before any result of
+  steps 1-3.
+- Results and the grading of every prediction will be added as RESULTS.md to RESULTS-4.md,
+  including the ones that fail.
 
 ## Limits
 
 UCDP covers organized violence with deaths, not protests or riots. Exposure and cut shares are
 country-level and observational, not a randomized cut. Other donors cut aid in 2025 too. The cut
-shares come from leaked March 2025 award lists as matched by CGD. The full lists are in section 7 of
-each pre-registration. This is research, not policy advice.
+shares come from leaked March 2025 award lists as matched by CGD. VIEWS forecasts state-based
+deaths only. Each pre-registration lists its own known threats. This is research, not policy
+advice.
 
 Contact: MV2, Munim, Inc., mv2@munimtech.com
