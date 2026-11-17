@@ -1,7 +1,7 @@
 # aid-cut-violence
 
 **Did the 2025 USAID shutdown raise organized violence worldwide, or only in Africa? And was it
-USAID's money, or just aid dependence standing in for fragility?**
+the cut itself, or just aid dependence standing in for fragility?**
 
 An open, pre-registered test by MV2 of Munim, Inc. The design, code and text were made with AI agents.
 Code: Apache-2.0. Text and results: CC BY 4.0.
@@ -9,64 +9,60 @@ Code: Apache-2.0. Text and results: CC BY 4.0.
 ## Why
 
 In early 2025 the US froze foreign assistance and shut down most USAID programmes. A May 2026 study
-in *Science* (Wright, Rohner et al., "Aiding peace or conflict? The impact of USAID cuts on
-violence", doi:10.1126/science.aed6802) found that conflict rose more in African regions that had
-received more US aid. Working papers by Tan, Amarasinghe and Ubilava, and Lee Crawfurd at CGD, found
-about +5% conflict events, also in Africa. All three use ACLED data, which cannot be freely
-redistributed, and none looks outside Africa, though the finding has been reported as global.
+in *Science* (Rohner, Sunde, Vanden Eynde, Wright and Zeng, "Aiding peace or conflict? The impact
+of USAID cuts on violence", doi:10.1126/science.aed6802) found that conflict rose more in African
+regions that had received more US aid. Working papers by Tan, Amarasinghe and Ubilava, Lee Crawfurd
+at CGD, and Jimmy Graham (GODAD Working Paper 1, 19 conflict-affected countries) also found rises.
+Most use ACLED data, which cannot be freely redistributed, and none tests the whole world, though
+the finding has been reported as global.
 
-This project asks the same question **for every low- and middle-income country**, with **only open
+This project asks the question **for every low- and middle-income country**, with **only open
 data** (UCDP GED 26.1 and UCDP candidate events to September 2026, ForeignAssistance.gov, World
-Bank), and with the design and predictions **fixed in public before the data is opened**.
+Bank, CGD's published country table), and with the design and predictions **fixed in public before
+the data is opened**.
 
 ## Step 1: worldwide test ([PREREGISTRATION.md](PREREGISTRATION.md))
 
-`aidcut.py` (Python standard library only):
-
-1. downloads UCDP GED 26.1, the UCDP 2026 candidate events, the ForeignAssistance.gov country
-   summary and World Bank population and metadata, and records each file's SHA-256;
-2. builds a balanced country-month panel of UCDP events and deaths (all violence types and each type);
-3. computes exposure = log(1 + US aid per person, FY2022-2024 mean disbursements);
-4. estimates the difference-in-differences with country and month fixed effects, globally, for
-   Africa and for the rest of the world, in the primary (to Dec 2025), extended (to Sep 2026) and
-   placebo (fake shock in Feb 2023) windows;
-5. reports randomization-inference p-values (9,999 permutations), country-clustered standard
-   errors, quarterly event studies with pre-trend tests, robustness checks and leave-one-out ranges;
-6. writes `results.json`, `results.md` and `country_table.csv`.
+`aidcut.py`: a country-month difference-in-differences of UCDP events and deaths on exposure =
+log(1 + US aid per person, FY2022-2024), globally, for Africa and for the rest of the world, in the
+primary (to Dec 2025), extended (to Sep 2026) and placebo (fake shock in Feb 2023) windows, with
+randomization-inference p-values, clustered errors, event studies and robustness checks.
 
 ## Step 2: was it USAID's money, and which kind? ([PREREG-2.md](PREREG-2.md))
 
-Countries that get a lot of US aid are also more fragile, so "aid dependence" can stand in for
-"fragility". The shutdown hit **USAID-managed** aid, while much other US aid (Defense and State
-security assistance, MCC and others) continued. `mechanism.py` uses ForeignAssistance.gov's
-managing-agency and sector files to test:
+`mechanism.py`: USAID-managed versus all other US aid (which mostly continued), the realized FY2025
+drop as a dose (IV), sectors, and a placebo.
 
-- **A, agency test:** does exposure to USAID-managed aid predict the post-2025 change in violence
-  better than exposure to all other US aid?
-- **B, dose response:** the realized FY2025 drop in USAID disbursements, instrumented by pre-cut
-  USAID aid per person;
-- **C, sector test:** humanitarian, health, governance, peace-and-security and other aid together;
-- **D, placebo:** the same tests with a fake shock in February 2023.
+## Step 3: the size of the cut, holding dependence fixed ([PREREG-3.md](PREREG-3.md))
 
-It was pre-registered before any result of step 1 existed.
+Countries that depended equally on USAID lost very different **shares** of their USAID programme in
+March 2025 (from about 15% to 100%, by CGD's count), because some "life-saving" awards were kept.
+`dose.py` asks whether, **among equally USAID-dependent countries, a larger cut share predicts a
+larger rise in violence**. It permutes the share within terciles of dependence, adds a
+pre-violence control for crisis selection, contrasts cut and retained dollars, and runs a placebo.
+If the share does not matter, country-level dependence designs (including our step 1) may be
+picking up fragility.
 
 ```
 python -m unittest -v
 python aidcut.py --data-dir data --out-dir out
 python mechanism.py --data-dir data --out-dir out
+python dose.py --data-dir data --out-dir out
 ```
 
 ## Status
 
 - 2026-11-17: step 1 pre-registration and code published; first run queued.
 - 2026-11-17: step 2 (PREREG-2.md, mechanism.py) pre-registered and queued, before step 1 results.
-- Results and the grading of every prediction will be added as RESULTS.md and RESULTS-2.md,
-  including the ones that fail.
+- 2026-11-17: step 3 (PREREG-3.md, dose.py) pre-registered and queued, before any result of steps 1-2.
+- Results and the grading of every prediction will be added as RESULTS.md, RESULTS-2.md and
+  RESULTS-3.md, including the ones that fail.
 
 ## Limits
 
-UCDP covers organized violence with deaths, not protests or riots. Exposure measures dependence on
-US foreign assistance, not a randomized cut. Other donors cut aid in 2025 too. The full lists are in
-PREREGISTRATION.md section 7 and PREREG-2.md section 7. This is research, not policy advice.
+UCDP covers organized violence with deaths, not protests or riots. Exposure and cut shares are
+country-level and observational, not a randomized cut. Other donors cut aid in 2025 too. The cut
+shares come from leaked March 2025 award lists as matched by CGD. The full lists are in section 7 of
+each pre-registration. This is research, not policy advice.
 
 Contact: MV2, Munim, Inc., mv2@munimtech.com
